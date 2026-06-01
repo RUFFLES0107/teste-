@@ -7,20 +7,61 @@
     <script>
         function pesquisarCep(){
             const cep = document.getElementById("cep").value
-            const link = "https://viacep.com.br/ws/" + cep + "/json/?callback=preencherEndereco"
-            var script = document.createElement("script")
-            script.src = link
-            document.body.appendChild(script)
+
+            const validacep  = /^[0-9]{8}$/
+            if(cep != ""){
+                if(validacep.test(cep)){
+
+                    const link = "https://viacep.com.br/ws/" + cep + "/json/?callback=preencherEndereco"
+                    var script = document.createElement("script")
+                    script.src = link
+                    document.body.appendChild(script)
+                } else {
+                    respostaRuim.textContent = "O CEP digitado esta fora do padrão permitido. Digite novamente!"
+                    document.getElementById("cep").value = ""
+                    resposta.textContent = ""
+
+                }
+            }else{
+                respostaRuim.textContent = "voce não escreveu nada. Por favor digite um CEP!"
+                resposta.textContent = ""
+            }
+            
+
+            
         }
         function preencherEndereco(conteudo){
-        resposta.textContent = JSON.stringify(conteudo)
+            if ("erro" in conteudo == false){
+                resposta.innerHTML = "Rua: " + conteudo.logradouro + "<br>" +
+                            "Bairro: " + conteudo.bairro + "<br>" +
+                            "Cidade: " + conteudo.localidade + " - " + conteudo.uf;
+               respostaRuim.textContent = ""
+            } else {
+                respostaRuim.textContent = "O CEP esta escrito errado!"
+                document.getElementById("cep").value = ""
+                resposta.textContent = ""
+
+            }
         }
     </script>
+    <style>
+
+        #respostaRuim{
+            color:red;
+        }
+        #resposta{
+            color: blue;
+        }
+        
+    </style>
 </head>
 <body>
+    
     <label>CEP:</label>
     <input type=" text" id="cep" >
     <button onclick="pesquisarCep()">Enviar</button>
+
+    <p id="respostaRuim"></p>
     <p id="resposta"></p>
 </body>
 </html>
